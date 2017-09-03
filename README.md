@@ -11,7 +11,7 @@ The Sinfonia orchestration tool is built on top of the Open Platform for Network
 
 Installing OPNFV
 ----------------
-OPNFV is a cloud operating system platform mantained by the Linux Foundation that provides the tools for the NFV orchestration Sinfonia is based upon. To install it, please read the [official documentation](http://docs.opnfv.org/en/stable-danube/release/installation.introduction.html) for its current relase. We recomment the [deployment through Fuel](http://docs.opnfv.org/en/stable-danube/submodules/fuel/docs/release/installation/index.html#fuel-installation) as it is easier to debug and it has a graphical installation tool. The hardware requirements for a minimum OPNFV environment deployment through Fuel are:
+OPNFV is a cloud operating system platform mantained by the Linux Foundation that provides the tools for the NFV orchestration Sinfonia is based upon. To install it, please read the [official documentation](http://docs.opnfv.org/en/stable-danube/release/installation.introduction.html) for its current relase. We recommend the [deployment through Fuel](http://docs.opnfv.org/en/stable-danube/submodules/fuel/docs/release/installation/index.html#fuel-installation) as it is easier to debug and it has a graphical installation tool. The hardware requirements for a minimum OPNFV environment deployment through Fuel are:
 
  - 1 Fuel Master node
  	- **CPU:**	Dual-core
