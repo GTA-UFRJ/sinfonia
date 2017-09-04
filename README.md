@@ -50,7 +50,7 @@ If you are running Python < 2.7.9 and don't have `pip` installed, check its [ins
 Configuring and running Sinfonia locally
 ----------------
 
-Sinfonia is designed to be used in a distributed scenario where different modules run on different hosts. However, the easiest and fastest way to deploy is by instantiating everything locally.
+Sinfonia is designed to be used in a distributed scenario where different modules run on different hosts. However, the easiest and fastest way to deploy is by instantiating everything locally. This section shows Sinfonia's simplest form of deployment. For advanced features, please refer to ().
 
 After OPNFV is up and running and the the Sinfonia installation setup is done, we need to configure our orchestrator and initialize our blockchain modules. First, we should define the OPNFV controller IP and the port for communication between the modules (2346 by default). Make sure the port you choose is available and not being blocked by any sort of firewall.
 
@@ -71,7 +71,7 @@ Then, put the orchestrator file inside the node controller and run it in a Pytho
 	>>> from orchestrator import *
 	>>> main()
 
-Note: Because we are connecting remotely to the controller, the `screen` package is used as a way to keep the orchestrator running if the `ssh` connection is lost. Using simply `python` would have been enough if we had physical access to the controller's terminal.
+_Note: Because we are connecting remotely to the controller, the `screen` package is used as a way to keep the orchestrator running if the `ssh` connection is lost. Using simply `python` would have been enough if we had physical access to the controller's terminal._
 
 Now, on your local machine, run the blockchain chain node that will store our sensitive commands. 
 
@@ -85,7 +85,7 @@ Detatch from the screen with Ctrl+A then Ctrl+D and intialize the blockchain cli
 	>>> from backChain.managementClient import *
 	>>> main()
 
-Note: The use of `screen` here is once again a way to simplify our deployment. This is equivalent to running the Python consoles on two bash terminals.  
+_Note: The use of `screen` here is once again a way to simplify our deployment. This is equivalent to running the Python consoles on two bash terminals._  
 
 By default, Sinfonia ships with a key pair that the blockchain client module uses to sign its transactions. If you want to generate your own key pair or define custom configurations, please refer to the Sinfonia advanced page.
 
