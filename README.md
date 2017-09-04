@@ -7,7 +7,7 @@ Official repository for Sinfonia, a Network Function Virtualization orchestratio
 Installation
 ------------
 
-The Sinfonia orchestration tool is built on top of the Open Platform for Network Function Virtualization (OPNFV) and the Django Python framework.  We need to install both modules to make the tool operational.
+The Sinfonia orchestration tool is built on top of the Open Platform for Network Function Virtualization (OPNFV) and a main server written with the Django Python framework.  We need to install both modules to make the tool operational.
 
 Installing OPNFV
 ----------------
@@ -31,7 +31,7 @@ OPNFV is a cloud operating system platform mantained by the Linux Foundation tha
 	- 1 Un-Tagged VLAN for PXE Boot - ADMIN Network
 *Note: These can be allocated to a single NIC - or spread out over multiple NICs as your hardware supports.*
  
- Sinfonia was originally developed in a 4-node deployment (1 controller node, 3 compute nodes) of the Danube 3.0 release of OPNFV and it should be compatible with previous and future releases.  
+ Sinfonia was originally developed in a 4-node deployment (1 controller node, 3 compute nodes) of OPNFV Danube 3.0 and it should be compatible with previous and future releases.  
 
 
 Installing Sinfonia
@@ -56,15 +56,16 @@ After OPNFV is up and running and the the Sinfonia installation setup is done, w
 	ssh root@<controller IP>
 	screen python
 	>>> from orchestrator import *
-	>>> 
+	>>> main()
 
 Note: Because we are connecting remotely to the controller, the `screen` package is used as a way to keep the orchestrator running if the `ssh` connection is lost. Using simply `python` would have been enough if we had physical access to the controller's terminal.
 
-Then, at your local machine, run the blockchain modules which will store our sensitive commands. 
+Then, remotely or on your local machine, run the blockchain chain node that will store our sensitive commands. 
 
     screen python
 	>>> from backChain.chainNode import *
 	>>> main()
+	
 Detatch from the screen with Ctrl+A then Ctrl+D and:
 
     screen python
