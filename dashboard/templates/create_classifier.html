@@ -1,0 +1,61 @@
+{% extends 'base_html.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="page-header">
+              <h3>Create new classifier</h3>            
+          </div>
+  <form id="create_form" action="javascript:create_item('/dashboard/create-classifier/','/dashboard/','#create_form');">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_classifier_name">Classifier Name</label>
+      <input type="text" class="form-control" id="id_classifier_name" name="classifier_name" placeholder="Enter name">
+    </div>
+
+    <div class="form-group">
+      <label for="id_src_port">Source Port</label>
+      <input type="text" class="form-control" id="id_src_port" name="src_port" placeholder="Source Port">
+    </div>    
+
+    <div class="form-group">
+      <label for="id_dst_port">Destination Port</label>
+      <input type="text" class="form-control" id="id_dst_port" name="dst_port" placeholder="Destination Port">
+    </div>
+
+    <div class="form-group">
+      <label for="id_select_netproto">Protocol</label>
+      <select class="form-control" id="id_select_netproto" name="netproto">
+        <option value="6">UDP</option>
+        <option value="17">TCP</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary form-control">Create classifier</button>
+    </div>
+    <input type="hidden" id="id_sfc_id" name="sfc_id" value="">
+  </form>
+
+<script type="text/javascript">
+
+  var getUrlParameter = function getUrlParameter(sParam) {
+      var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+          sURLVariables = sPageURL.split('&'),
+          sParameterName,
+          i;
+
+      for (i = 0; i < sURLVariables.length; i++) {
+          sParameterName = sURLVariables[i].split('=');
+
+          if (sParameterName[0] === sParam) {
+              return sParameterName[1] === undefined ? true : sParameterName[1];
+          }
+      }
+  };
+
+  $(document).ready(function(){
+    console.log(getUrlParameter('sfc_id'));
+    $('#id_sfc_id').val(getUrlParameter('sfc_id'));
+  });
+</script>
+{% endblock content %}

@@ -1,0 +1,17 @@
++--------------+--------------------------------------+
+| Field        | Value                                |
++--------------+--------------------------------------+
+| attributes   | {}                                   |
+| chain        | d69f6655-2653-4161-97e9-1428a1e2f9e9 |
+|              | d7ab2b23-9c47-4c11-88ca-5d12b70cab7f |
+|              | 98dc86de-61e5-421a-bb64-4d23d757c122 |
+|              | 78f19f10-8280-4f2e-bd7c-2ea67586ef6c |
+| description  |                                      |
+| id           | 1adcbd1f-ad90-4a99-80f2-609cb28bfb64 |
+| infra_driver | opendaylight                         |
+| instance_id  | Path-gta-chain-Path-263              |
+| name         | gta-chain                            |
+| status       | ACTIVE                               |
+| symmetrical  | False                                |
+| tenant_id    | 24ddbf63ad0f495fa84befab7b4a66b0     |
++--------------+--------------------------------------+

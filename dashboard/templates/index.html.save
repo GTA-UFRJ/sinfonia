@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>HTML5 : Hello World Example</title>
+        <link rel="stylesheet" type "text/css" href="/static/css/joint.css" />
+        <script src="/static/js/jquery.js"></script>
+        <script src="/static/js/lodash.js"></script>
+        <script src="/static/js/backbone.js"></script>
+        <script src="/static/js/joint.js"></script>
+    </head>
+
+    <body>
+	<p>Para criar a cadeia, arraste o bloco de destino ate o bloco de origem, sempre comecando com o Servidor e terminando com o Cliente. Excluir links ainda nao funciona (tem que atualizar a pagina e comecar de novo).</p>
+        <form method="post" id='form-submit' action="/dashboard/">
+            <input type="hidden" name="vnf1" id="vnf1" value="">
+            <input type="hidden" name="vnf2" id="vnf2" value="">
+            <input type="hidden" name="vnf3" id="vnf3" value="">
+            <input type="submit" name="deploy" id="deploy" value="Criar cadeia">
+            {% csrf_token %}
+        </form>
+
+    <div id="paper-connection-by-dropping"></div>
+
+    <script type="text/javascript">
+        (function() {
+            var vnf_count = 0;
+            var vnfs = ["{{vnf_list.0}}","{{vnf_list.1}}", "{{vnf_list.2}}"];
+            console.log(vnfs.length)
+            var graph = new joint.dia.Graph;
+            var paper = new joint.dia.Paper({ el: $('#paper-connection-by-dropping'), width: 800, height: 300, gridSize: 1, model: graph });
+
+            var el1 = new joint.shapes.basic.Rect({
+                position: { x: 50, y: 50 }, size: { width: 100, height: 40 },
+                attrs: {
+                    rect: {
+                        'stroke-width': '5',
+                        'stroke-opacity': .7,
+                        stroke: 'black',
+                        rx: 3,
+                        ry: 3,
+                        fill: 'lightgray',
+                        'fill-opacity': .5
+                    },
+                    text: { text: '', 'font-size': 10, style: { 'text-shadow': '1px 1px 1px lightgray' } }
+                }
+            });
+
+            // Add VNFs to paper
+            for (i=0; i<vnfs.length;i++) {
+                var new_cell = el1.clone().translate((i+1)*100 + 100,50).attr('text/text', vnfs[i]);
+                $('<input>').attr('type','hidden').attr('id', new_cell.id).attr('name', vnfs[i]).appendTo($('#form-submit'));
+                graph.addCell(new_cell);
+            }
+
+            // Add Server/Client to paper and save ids
+            var server = el1.clone().translate(50, 50).attr('text/text', 'Servidor');
+            //var client = el1.clone().translate(550, 50).attr('text/text', 'Cliente');
+            var server_id = server.id;
+            //var client_id = client.id;
+
+            graph.addCells([server]);
+
+        // Here is the real deal. Listen on cell:pointerup and link to an element found below.
+            paper.on('cell:pointerup', function(cellView, evt, x, y) {
+
+                // Find the first element below that is not a link nor the dragged element itself.
+                var elementBelow = graph.get('cells').find(function(cell) {
+                    if (cell instanceof joint.dia.Link) return false; // Not interested in links.
+                    if (cell.id === cellView.model.id) return false; // The same element as the dropped one.
+                    if (cell.getBBox().containsPoint(g.point(x, y))) {
+                        return true;
+                    }
+                    return false;
+                });
+
+                // If the two elements are connected already, don't
+                // connect them again (this is application specific though).
+                if (elementBelow && !_.contains(graph.getNeighbors(elementBelow), cellView.model)) {
+
+                    graph.addCell(new joint.dia.Link({
+                        source: { id: cellView.model.id }, target: { id: elementBelow.id },
+                        attrs: { '.marker-source': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+                    }));
+                    // Move the element a bit to the side.
+                    //cellView.model.translate(-200, 0);
+
+                    // Increment global VNF count if Server/Client are not part of the new link
+                    if (cellView.model.id != server_id) {
+                        if (vnf_count == 0) {
+                            vnf_count += 2;
+                            $('#' + elementBelow.id).val(1);
+                            $('#' + cellView.model.id).val(2);
+                        } 
+                        else {
+                          vnf_count += 1;
+                          $('#' + cellView.model.id).val(vnf_count);  
+                        }                        
+                    }
+
+                }
+            });
+        }());
+      </script>
+
+    </body>
+
+</html>

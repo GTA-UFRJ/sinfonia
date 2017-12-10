@@ -1,0 +1,52 @@
+{% extends 'base_html.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="page-header">
+              <h3>Create new Virtual Machine</h3>            
+          </div>
+  <form>
+    <div class="form-group">
+      <label for="vm-name">Virtual Machine Name</label>
+      <input type="text" class="form-control" id="vm-name" placeholder="Enter name">
+    </div>
+    <div class="form-group">
+      <label for="select-image">Image</label>
+      <select class="form-control" id="select-image">
+        {% for i in images %}
+        <option>{{ i.Name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="select-node">Node</label>
+      <select class="form-control" id="select-node">
+        {% for i in nodes %}
+        <option>{{ i | get_item:"Hypervisor hostname" }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="select-network">Network</label>
+      <select class="form-control" id="select-network">
+        {% for i in networks %}
+        <option>{{ i.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="select-flavor">Flavor</label>
+      <select class="form-control" id="select-flavor">
+        {% for i in flavors %}
+        <option>{{ i.Name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary form-control">Create VM</button>
+    </div>
+  </form>
+{% endblock content %}

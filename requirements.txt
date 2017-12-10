@@ -1,0 +1,8 @@
+django-registration
+django-registration-defaults
+pycryptodomex
+demjson
+django
+rpyc
+pymongo
+requests

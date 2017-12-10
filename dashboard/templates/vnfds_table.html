@@ -1,0 +1,31 @@
+{% extends 'base_html.html' %}
+{% block content %}
+        <div class="page-header">
+            <h3>VNF Descriptors</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th> ID </th>
+                    <th> Name </th>
+                    <th> Description </th>
+                    <th> Infra Driver </th>
+                    <th> Mgmt Driver </th>
+
+                </tr>
+            </thead>
+            <tbody>
+            {% for vnfd in vnfds %}
+                <tr>
+                    <td> {{ vnfd.id }} </td>
+                    <td> {{ vnfd.name }} </td>
+                    <td> {{ vnfd.description }} </td>
+                    <td> {{ vnfd.infra_driver }} </td>
+                    <td> {{ vnfd.mgmt_driver }} </td>
+                    <td><button class="btn btn-danger" onclick="delete_item('{{ vnfd.id }}', 'vnfd');">Delete</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends 'base_html.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="page-header">
+              <h3>Create new network</h3>            
+          </div>
+  <form id="create_form" action="javascript:create_item('/dashboard/create-network/','/dashboard/networks/','#create_form');">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_net_name">Network Name</label>
+      <input type="text" class="form-control" id="id_net_name" name="net_name" placeholder="Enter name">
+    </div>
+    <div class="form-group">
+      <label for="id_net_cidr">Network CIDR</label>
+      <input type="text" class="form-control" id="id_net_cidr" name="net_cidr" placeholder="Network CIDR">
+    </div>
+    <div class="form-group">
+      <label for="id_net_dns">DNS Server IP</label>
+      <input type="text" class="form-control" id="id_net_dns" name="net_dns" placeholder="DNS IP">
+    </div>
+    <div class="form-group">
+      <label for="id_net_dhcp_start">DHCP IP Pool Start</label>
+      <input type="text" class="form-control" id="id_net_dhcp_start" name="net_dhcp_start" placeholder="DHCP Start">
+    </div>
+    <div class="form-group">
+      <label for="id_net_dhcp_end">DHCP IP Pool End</label>
+      <input type="text" class="form-control" id="id_net_dhcp_end" name="net_dhcp_end" placeholder="DHCP End">
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary form-control">Create network</button>
+    </div>
+  </form>
+
+{% endblock content %}

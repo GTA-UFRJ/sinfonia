@@ -1,0 +1,13 @@
+Created a new vnf:
++-------------+--------------------------------------+
+| Field       | Value                                |
++-------------+--------------------------------------+
+| description | Gta VNF Ubuntu                       |
+| id          | 78f19f10-8280-4f2e-bd7c-2ea67586ef6c |
+| instance_id | 0cd8ed54-d405-4b14-88c4-c9e7ebc78fa4 |
+| mgmt_url    |                                      |
+| name        | gta-vnf-4                            |
+| status      | PENDING_CREATE                       |
+| tenant_id   | 24ddbf63ad0f495fa84befab7b4a66b0     |
+| vnfd_id     | e55b697d-2236-4246-935d-77364a195449 |
++-------------+--------------------------------------+

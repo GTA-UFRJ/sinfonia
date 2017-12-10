@@ -1,0 +1,30 @@
+{% extends 'base_html.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="page-header">
+              <h3>Create new VNF</h3>
+          </div>
+  <form id="create_form" action="javascript:create_item('/dashboard/create-vnf/','/dashboard/vnfs/','#create_form');">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_vnf_name">VNF Name</label>
+      <input type="text" class="form-control" id="id_vnf_name" name="vnf_name" placeholder="Enter name">
+    </div>
+
+    <div class="form-group">
+      <label for="id_vnfd_id">VNF Descriptor</label>
+      <select class="form-control" id="id_vnfd_id" name="vnfd_id">
+        {% for vnfd in vnfds %}
+        <option value="{{ vnfd.id }}">{{ vnfd.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary form-control">Create VNF</button>  
+    </div>
+  </form>
+
+
+{% endblock content %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Topology</title>
+
+    <style type="text/css">#topology {width: 900px; height: 600px; border: 1px solid lightgray;}</style>
+    <script type="text/javascript" src="js/vis.min.js"></script>
+    <link href="css/vis.min.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+    var nodes = null;
+    var edges = null;
+    var network = null;
+
+    var DIR = 'img/';
+    var EDGE_LENGTH_MAIN = 150;
+    var EDGE_LENGTH_SUB = 30;
+
+    // Called when the Visualization API is loaded.
+    function draw() {
+      // Create a data table with nodes.
+      nodes = [];
+
+      // Create a data table with links.
+      edges = [];
+
+      nodes.push({id: 1, label: 'node1.gta.ufrj.br', image: DIR + 'server.png', shape: 'image', size: 40});
+      nodes.push({id: 2, label: 'node1.gta.ufrj.br', image: DIR + 'server.png', shape: 'image', size: 40});
+      nodes.push({id: 3, label: 'node1.gta.ufrj.br', image: DIR + 'server.png', shape: 'image', size: 40});
+      nodes.push({id: 11, label: 'nova', image: DIR + 'switch.png', shape: 'image', size: 20, title:'<b>blah:</b> bla <br> blah: blah'});
+
+      edges.push({from: 1, to: 11, length: EDGE_LENGTH_SUB, color: 'black'});
+      edges.push({from: 2, to: 11, length: EDGE_LENGTH_SUB, color: 'black'});
+      edges.push({from: 3, to: 11, length: EDGE_LENGTH_SUB, color: 'black'});
+
+      nodes.push({id: 21, label: 'gta-net-1', image: DIR + 'router.png', shape: 'image', size: 16});
+      nodes.push({id: 23, label: 'gta-net-2', image: DIR + 'router.png', shape: 'image', size: 16});
+
+      nodes.push({id: 31, label: 'VNF-1', image: DIR + 'vnf.png', shape: 'image', size: 20});
+      nodes.push({id: 32, label: 'VNF-2', image: DIR + 'vnf.png', shape: 'image', size: 20});
+      nodes.push({id: 33, label: 'VNF-3', image: DIR + 'vnf.png', shape: 'image', size: 20});
+      nodes.push({id: 34, label: 'VNF-4', image: DIR + 'vnf.png', shape: 'image', size: 20});
+      nodes.push({id: 35, label: 'VNF-5', image: DIR + 'vnf.png', shape: 'image', size: 20});
+
+      edges.push({from: 21, to: 31, length: EDGE_LENGTH_SUB});
+      edges.push({from: 21, to: 32, length: EDGE_LENGTH_SUB});
+      edges.push({from: 23, to: 33, length: EDGE_LENGTH_SUB});
+      edges.push({from: 23, to: 34, length: EDGE_LENGTH_SUB});
+      edges.push({from: 23, to: 35, length: EDGE_LENGTH_SUB});
+
+      edges.push({from: 1, to: 31, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});
+      edges.push({from: 1, to: 32, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});
+      edges.push({from: 2, to: 33, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});
+      edges.push({from: 2, to: 34, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});
+      edges.push({from: 3, to: 35, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});
+
+
+      // create a network
+      var container = document.getElementById('topology');
+      var data = {nodes: nodes, edges: edges};
+      var options = {physics:{solver: 'repulsion'}};
+      network = new vis.Network(container, data, options);
+    }
+  </script>
+
+
+</head>
+<body onload="draw()">
+    <div id="topology"></div>
+
+    </body>
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% extends 'base_html.html' %}
+{% load custom_filters %}
+
+{% block content %}
+    <div class="page-header">
+        <h3>Sinfonia Dashboard</h3>            
+    </div>
+    <div id="accordion" style="text-align: center;">
+        {% for sfc in sfc_list %}
+        <h3>{{ sfc.name }}</h3>
+        <div>
+            <div id="sfc-view" class="row" style="display: inline-block;">
+                <div id="start" class="panel panel-warning arrow_box" style="margin: 15px 15px 15px 15px">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Start</h4>
+                    </div>
+                    <div class="panel-body">
+                            Chain start
+                    </div>
+                </div>
+                <!-- {{sfc.chain}} -->
+                {% for vnf in sfc.chain %}
+                    <div id="vnf_{{forloop.counter}}" class="panel panel-warning arrow_box" style="margin: 15px 15px 15px 15px">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">{{vnf.name}}</h4>
+                        </div>
+                        <div class="panel-body">
+                            {{vnf.description}}
+                        </div>  
+                    </div>
+                {% endfor %}
+                <div id="end" class="panel panel-warning" style="text-align: center; margin: 15px 15px 15px 15px">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">End</h4>
+                    </div>
+                    <div class="panel-body">
+                            Chain end
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-classifier_{{sfc.id}}">Classifier</button>
+                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-SFC_{{sfc.id}}">Show Details</button>
+                <button class="btn btn-danger" data-target="#modal-Delete" onclick="delete_item('{{ sfc.id }}', 'sfc');">Delete</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <button class="btn btn-success col-md-2 col-md-offset-10" style="margin-top: 15px" onclick="location.href='/dashboard/create-sfc'">Create new SFC</button>            
+    </div>
+
+    {% for sfc in sfc_list %}
+        <!-- Modals -->
+
+        <!-- Classifier details -->
+        <div id="modal-classifier_{{ sfc.id }}" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title"> {{ sfc.name }} Classifier Details</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            {% if sfc.classifier.id|length > 0 %}
+                            <thead>
+                                <tr>
+                                    <th> ID </th>
+                                    <th> Name </th>
+                                    <th> Rules </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td> {{ sfc.classifier.id }} </td>
+                                    <td> {{ sfc.classifier.name }} </td>
+                                    <td> {{ sfc.classifier.acl_match_criteria }}</td>
+                                    <td><button class="btn btn-danger" onclick="delete_item('{{ sfc.classifier.id }}', 'classifier');">Delete</button></td>
+                                </tr>
+                            </tbody>
+                            {% else %}
+                                <button class="form-control btn btn-success" onclick="location.href='/dashboard/create-classifier?sfc_id={{sfc.id}}'">Create Classifier</button>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SFC Details -->
+        <div id="modal-SFC_{{ sfc.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ sfc.name }} Details</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th> ID </th>
+                                    <th> Name </th>
+                                    <th> VNFs </th>
+                                    <th> Symmetrical </th>
+                                    <th> Status </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td> {{ sfc.id }} </td>
+                                    <td> {{ sfc.name }} </td>
+                                    <td> 
+                                        {% for vnf in sfc.chain %}
+                                            {{ vnf.name }}, 
+                                        {% endfor %}
+                                    </td>
+                                    <td> {{ sfc.symmetrical }} </td>
+                                    <td> {{ sfc.status }} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+
+
+<script>
+    $( function() {
+        $( "#accordion" ).accordion({
+            heightStyle: "fill"
+        });
+    });
+</script>
+
+{% endblock content %}

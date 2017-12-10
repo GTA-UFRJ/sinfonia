@@ -1,0 +1,113 @@
+{% extends 'base_html.html' %}
+{% block content %}
+        <div class="page-header">
+            <h3>Networks</h3>            
+        </div>
+
+        <style type="text/css">
+            #topology {
+              width: 900px;
+              height: 600px;
+              border: 1px solid lightgray;
+              margin: auto;}
+        </style>
+        <script type="text/javascript" src="/static/js/vis.min.js"></script>
+        <link href="/static/css/vis.min.css" rel="stylesheet" type="text/css" />
+
+        <script type="text/javascript">
+                var nodes = [];
+                var edges = [];
+                var network = null;
+
+            function draw() {
+                $.getJSON('/dashboard/mapdata/', function (data) {
+
+                    var DIR = '/static/img/';
+                    var EDGE_LENGTH_MAIN = 150;
+                    var EDGE_LENGTH_SUB = 30;
+
+                    nodes.push({id: 'nova', label: 'nova', image: DIR + 'switch.png', shape: 'image', size: 20});
+
+                    $.each(data.hosts, function (key, val) {
+                        nodes.push({id: key,
+                                    label: key,
+                                    image: DIR + 'server.png',
+                                    shape: 'image',
+                                    size: 40
+                        });
+                        edges.push({from: key, to: 'nova', length: EDGE_LENGTH_SUB, color: 'black'});
+                    });
+
+                    $.each(data.networks, function (key, val) {
+                        nodes.push({id: key,
+                                    label: key,
+                                    image: DIR + 'router.png',
+                                    shape: 'image',
+                                    size: 16,
+                                    title: '<b>Subnet</b>: ' + val.subnets
+                        });
+                    });
+
+                    $.each(data.vnfs, function (key, val) {
+                        nodes.push({id: key,
+                                    label: val.name,
+                                    image: DIR + 'vnf.png',
+                                    shape: 'image',
+                                    size: 20,
+                                    title: '<b>Status:</b> ' + val.status + '<br/><b>Private IP:</b> ' +  val.network_ip + '<br/><b>Public IP:</b> ' + val.public_ip + '<br/><b>ID:</b> ' + key
+                        });
+                        if (val.host != "None") {edges.push({from: key, to: val.host, length: EDGE_LENGTH_MAIN, dashes: true, color: 'gray'});}
+                        if (val.network != "None") {edges.push({from: key, to: val.network, length: EDGE_LENGTH_SUB});}
+                    });
+
+                    // create a network
+                    var container = document.getElementById('topology');
+                    var drawing_data = {nodes: nodes, edges: edges};
+                    var options = {physics: {solver: 'repulsion'}};
+                    network = new vis.Network(container, drawing_data, options);
+                });
+            }
+        </script>
+
+        <div id="topology">
+            <div id=loading class="sk-cube-grid">
+                <img style="height: 122.17px; width: 100px; margin-bottom: 17.83pt" src="/static/img/sinfonia.png">
+                <div class="sk-cube sk-cube1"></div>
+                <div class="sk-cube sk-cube2"></div>
+                <div class="sk-cube sk-cube3"></div>
+                <div class="sk-cube sk-cube4"></div>
+                <div class="sk-cube sk-cube5"></div>
+                <div class="sk-cube sk-cube6"></div>
+                <div class="sk-cube sk-cube7"></div>
+                <div class="sk-cube sk-cube8"></div>
+                <div class="sk-cube sk-cube9"></div>
+            </div>
+            <script type="text/javascript">
+                draw();
+            </script>
+        </div>
+
+        <br /><br />
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th> ID </th>
+                    <th> Name </th>
+                    <th> Subnets </th>
+
+                </tr>
+            </thead>
+            <tbody>
+            {% for network in networks %}
+                <tr>
+                    <td> {{ network.id }} </td>
+                    <td> {{ network.name }} </td>
+                    <td> {{ network.subnets }} </td>
+                    <td><button class="btn btn-danger" onclick="delete_item('{{ network.name }}', 'network');">Delete</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+{% endblock content %}

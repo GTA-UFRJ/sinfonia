@@ -1,0 +1,130 @@
+{% extends 'base_html.html' %}
+{% block content %}
+        <div class="page-header">
+            <h3>Create new Service Function Chain</h3>            
+        </div>
+        <form id="form-create-sfc" action="/dashboard/create-sfc/">
+            {% csrf_token %}
+            <div class="col-md-12 form-group row">
+                <label for="sfc-name">Name</label>
+                <input type='text' style="margin-left: 20px" class="" name='sfc-_ame' id='id_sfc_name' placeholder="SFC Name">
+            </div>  
+            <div id="sortable-container" style="margin-top: 30px" class="form-group">
+                <h4>Chain design</h4>
+                <div id="sortable" class="connectedSortable col-md-12">
+                    <div id="start" class="panel panel-warning arrow_box" style="margin: 15px 15px 15px 15px">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Start</h4>
+                        </div>
+                        <div class="panel-body">
+                                VNF Description
+                        </div>
+                    </div>
+                    <div id="vnf_placeholder" class="panel panel-warning arrow_box" style="margin: 15px 15px 15px 15px">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">VNF</h4>
+                            <!-- Watch Out: Here We must use the effect name in the data tag-->
+                            <span id="remove-button" class="pull-right clickable" data-effect="remove"><i class="glyphicon glyphicon-remove"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            VNF Description
+                        </div>
+                    </div>
+                    <div id="end" class="panel panel-warning" style="text-align:center; margin: 15px 15px 15px 15px">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">End</h4>
+                        </div>
+                        <div class="panel-body">
+                                VNF Description
+                        </div>
+                    </div>
+                </div>
+                <h4>Available VNFs</h4>
+                <div id="sortable2" class="connectedSortable col-md-12 form-group">
+                    {% for vnf in vnfs %}
+                        <div id="{{vnf.name}}" class="panel panel-warning" style="text-align:center; margin: 15px 15px 15px 15px">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">{{ vnf.name }}</h4>
+                                <span id="remove-button" class="pull-right clickable" data-effect="remove" style="display: none"><i class="glyphicon glyphicon-remove"></i></span>
+
+                            </div>
+                            <div class="panel-body">
+                                {{ vnf.description }}
+                            </div>
+                        </div>   
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary form-control" type='submit' value="Create SFC"></input>
+            </div>
+        </form>
+
+
+    <script type="text/javascript">
+
+        //var count = 0;
+
+        $("#sortable2").sortable({
+            containment: "#sortable-container",
+            connectWith: ".connectedSortable",
+            helper: function (e, li) {
+                this.copyHelper = li.clone().insertAfter(li);
+                $(this).data('copied', false);
+                return li.clone();
+            },
+            stop: function () {
+                var copied = $(this).data('copied');
+                if (!copied) {
+                    this.copyHelper.remove();
+                }
+                this.copyHelper = null;
+            }
+        }).disableSelection();
+
+        $("#sortable").sortable({ 
+            items: "div:not(:last-child,:first-child)",
+            cancel: '#end,#start',
+            containment: "#form-create-sfc", 
+            receive: function (e, ui) {
+                //var new_id = ui.item.attr('id') + '_' + count;
+                //console.log(new_id);
+                ui.sender.data('copied', true);
+                ui.item.addClass('arrow_box');
+                ui.item.css('text-align', 'left');
+                //ui.item.attr('id', new_id);
+                ui.item.find("#remove-button").css('display', 'block');
+                $('#vnf_placeholder').remove();
+                //count++;
+            } 
+        }).disableSelection();
+
+        $('#form-create-sfc').submit(function(){
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': Cookies.get('csrftoken')
+                },
+                type:'POST',
+                url:$('#form-create-sfc').attr('action'),
+                data: {
+                    'sfc_name': $('#id_sfc_name').val(),
+                    'vnfs': $('#sortable').sortable('serialize')
+                },
+                success: function(response){
+                    alert(response);  
+                    }
+                });
+            return false;
+        }); 
+    </script>
+
+    <script>
+        $(function(){
+            $('.clickable').on('click',function(){
+                var effect = $(this).data('effect');
+                    $(this).closest('.panel')[effect]();
+                })
+        })
+    </script>
+
+{% endblock content %}

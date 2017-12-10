@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Sinfonia</title>
+        <link rel="icon" type="image/png" href="/static/img/favicon.png">
+        <link rel="stylesheet" href="/static/css/style.css" />
+        <link rel="stylesheet" href="/static/css/jquery-ui.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <style type="text/css">
+            .no-close .ui-dialog-titlebar-close {display: none;}
+
+            .sk-cube-grid {
+              position: relative;
+              top: 50%; left: 50%;
+              transform: translate(-50%,-50%);
+              width: 100px;
+              height: 240px;
+            }
+
+            .sk-cube-grid .sk-cube {
+              width: 33px;
+              height: 33px;
+              background-color: #333;
+              float: left;
+              -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+                      animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+            }
+            .sk-cube-grid .sk-cube1 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; }
+            .sk-cube-grid .sk-cube2 {
+              -webkit-animation-delay: 0.3s;
+                      animation-delay: 0.3s; }
+            .sk-cube-grid .sk-cube3 {
+              -webkit-animation-delay: 0.4s;
+                      animation-delay: 0.4s; }
+            .sk-cube-grid .sk-cube4 {
+              -webkit-animation-delay: 0.1s;
+                      animation-delay: 0.1s; }
+            .sk-cube-grid .sk-cube5 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; }
+            .sk-cube-grid .sk-cube6 {
+              -webkit-animation-delay: 0.3s;
+                      animation-delay: 0.3s; }
+            .sk-cube-grid .sk-cube7 {
+              -webkit-animation-delay: 0s;
+                      animation-delay: 0s; }
+            .sk-cube-grid .sk-cube8 {
+              -webkit-animation-delay: 0.1s;
+                      animation-delay: 0.1s; }
+            .sk-cube-grid .sk-cube9 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; }
+
+            @-webkit-keyframes sk-cubeGridScaleDelay {
+              0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                        transform: scale3D(1, 1, 1);
+              } 35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                        transform: scale3D(0, 0, 1);
+              }
+            }
+
+            @keyframes sk-cubeGridScaleDelay {
+              0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                        transform: scale3D(1, 1, 1);
+              } 35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                        transform: scale3D(0, 0, 1);
+              }
+            }
+
+            .modal_loader {
+                display:    none;
+                position:   fixed;
+                z-index:    3000;
+                top:        0;
+                left:       0;
+                height:     100%;
+                width:      100%;
+                background: rgba( 255, 255, 255, .8 );
+            }
+
+            body.loading {
+                overflow: hidden;
+            }
+
+            body.loading .modal_loader {
+                display: block;
+            }
+        </style>
+
+        <script src="/static/js/jquery-3.2.1.js"></script>
+        <script src="/static/js/cookie.js"></script>
+        <script src="/static/js/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <script type="text/javascript">
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                       var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+             function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            function delete_item(id, type) {
+                $('<div title="Deleting item"><p>Are you sure?</p></div>').dialog({
+                    resizable: false,
+                    modal: true,
+                    buttons: {'Ok': function() {
+                        $("body").addClass("loading");
+                        $.post('/dashboard/delete/',
+                            {objid:id, objtype: type},
+                            function (data, textStatus) {
+                                $("body").removeClass("loading");
+                                $('<div title="Deletion request result"><p>' + data.result + '</p></div>').dialog({
+                                    resizable: false,
+                                    dialogClass: "no-close",
+                                    modal: true,
+                                    closeOnEscape: false,
+                                    buttons: {'Ok': function() {
+                                        location.reload(true);
+                                        $("body").addClass("loading");
+                                    }}
+                                });
+                                },
+                            'json');
+                        },
+                        'Cancel': function() {$(this).dialog("close");}
+                    }
+                });
+            }
+
+            function create_item(url, redirect_to, form) {
+                $("body").addClass("loading");
+                $.post(url,
+                    $(form).serialize(),
+                    function (data, textStatus) {
+                        $("body").removeClass("loading");
+                        $('<div title="Creation request result"><textarea readonly rows="8" cols="90" >' + data + '</textarea></div>').dialog({
+                            resizable: false,
+                            width: 'auto',
+                            dialogClass: "no-close",
+                            modal: true,
+                            zindex: 2000,
+                            closeOnEscape: false,
+                            buttons: {
+                                'Ok': function () {
+                                    $(location).attr('href', redirect_to);
+                                    $("body").addClass("loading");
+                                }
+                            }
+                        });
+                    },
+                    'text');
+            }
+
+            var csrftoken = getCookie('csrftoken');
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+             });
+        </script>
+    </head>
+    <body style="background-image: url('/static/img/cuequinha.jpg');">
+
+    <nav class="navbar navbar-default sidebar" role="navigation" style="background-color: #efefef;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>      
+            </div>
+            <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="/dashboard/"><span class="pull-right hidden-xs showopacity">
+                        <img style="height: 100%; width: 100%; margin-bottom: 20pt" src="/static/img/sinfonia.png">
+                    </span></a></li>
+                    <li>
+                        <a>Welcome, {{ user.get_username }}. </a>                 
+                    </li>
+                    <li class="active"><a href="/dashboard/">Home<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">SFCs <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-link"></span></a>
+                        <ul class="dropdown-menu forAnimate" role="menu">
+                            <li><a href="/dashboard/create-sfc">Create</a></li>
+                        </ul>
+                    </li>    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">VNFs <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-tasks"></span></a>
+                        <ul class="dropdown-menu forAnimate" role="menu">
+                            <li><a href="/dashboard/vnfs">List VNFs</a></li>
+                            <li><a href="/dashboard/create-vnf">Create new VNF</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">VNFDs <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-list-alt"></span></a>
+                        <ul class="dropdown-menu forAnimate" role="menu">
+                            <li><a href="/dashboard/vnfds">List VNFDs</a></li>
+                            <li><a href="/dashboard/create-vnfd">Create new VNFD</a></li>
+                        </ul>
+                    </li>                 
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Networks <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-globe"></span></a>
+                        <ul class="dropdown-menu forAnimate" role="menu">
+                            <li><a href="/dashboard/networks">List Networks</a></li>
+                            <li><a href="/dashboard/create-network">Create</a></li>
+                        </ul>
+                    </li> 
+                    <li>
+                        <a href="/accounts/logout">Logout<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a>
+                    </li>
+<!--                     <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">VMs <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-hdd"></span></a>
+                        <ul class="dropdown-menu forAnimate" role="menu">
+                            <li><a href="/dashboard/create-vm">Create</a></li>
+                        </ul>
+                    </li>  -->
+
+                    <!--<li ><a href="">VMs<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>        
+                    <li ><a href="#">Tags<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-tags"></span></a></li>-->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="rcorners2">
+    {% block content %}
+    {% endblock %}
+        </div>
+    </div>
+    <div class="modal_loader">
+        <div class="sk-cube-grid">
+            <img style="height: 122.17px; width: 100px; margin-bottom: 17.83pt" src="/static/img/sinfonia.png">
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    </div>
+    </body>
+</html>
